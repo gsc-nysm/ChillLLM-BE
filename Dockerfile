@@ -4,13 +4,15 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
-RUN npm install pm2 -g
+RUN npm install --production
 
 COPY . .
 
-RUN npx prisma generate
+
 RUN npm run build
 
+RUN npx prisma generate
 
-CMD ["pm2-runtime", "ecosystem.config.js"]
+EXPOSE 3000
+
+CMD ["node", "dist/main.js"]
