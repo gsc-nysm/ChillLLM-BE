@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:3000"
+    environment:
+      - PORT
+      - SECRET_AUTH_KEY
+      - APP_MODE
+      - HIDE_POST_ENDPOINTS
+      - DATABASE_URL
+    networks:
+      - db_postgres
+    depends_on:
+      db:
+        condition: service_started
+
+  db:
+    image: postgres:alpine3.18
+    container_name: postgres
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - db_postgres
+
+volumes:
+  postgres-data:
+networks:
+  db_postgres:
+    external: true
